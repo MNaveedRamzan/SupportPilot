@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+    <File Path="test-streaming.html" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/SupportPilot.Tests/SupportPilot.Tests.csproj" />
+  </Folder>
+  <Project Path="src/SupportPilot.Api/SupportPilot.Api.csproj" Id="97ea9913-cd26-4caa-a911-ee0008bbe1f0" />
+  <Project Path="src/SupportPilot.Application/SupportPilot.Application.csproj" Id="e863970d-ffd5-4f99-bf70-5c4b5eb6d65b" />
+  <Project Path="src/SupportPilot.Domain/SupportPilot.Domain.csproj" Id="e1d94931-55d6-4ee6-a7f8-84a13352a927" />
+  <Project Path="src/SupportPilot.Infrastructure/SupportPilot.Infrastructure.csproj" Id="7d027341-a352-420f-9607-94afb6adc753" />
+</Solution>

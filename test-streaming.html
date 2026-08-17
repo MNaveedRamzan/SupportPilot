@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Streaming Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+</head>
+<body>
+    <h2>SupportPilot — Streaming Test</h2>
+    <input id="message" type="text" style="width: 400px;" value="How do I get a refund?" />
+    <button onclick="ask()">Ask</button>
+    <pre id="output" style="border: 1px solid #ccc; padding: 10px; min-height: 100px; white-space: pre-wrap;"></pre>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7020/hubs/chat")
+            .build();
+
+
+        connection.on("ReceiveChunk", (chunk) => {
+            document.getElementById("output").textContent += chunk;
+        });
+
+        connection.on("ReceiveComplete", () => {
+            document.getElementById("output").textContent += "\n\n[DONE]";
+        });
+
+        connection.start().then(() => console.log("Connected"));
+
+        function ask() {
+            document.getElementById("output").textContent = "";
+            const message = document.getElementById("message").value;
+            connection.invoke("Ask", message);
+}
+
+connection.start()
+    .then(() => console.log("Connected"))
+    .catch(err => console.error("Connection failed:", err));
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: supportpilot-postgres
+    environment:
+      POSTGRES_DB: supportpilot
+      POSTGRES_USER: supportpilot
+      POSTGRES_PASSWORD: localdevpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - supportpilot-pgdata:/var/lib/postgresql/data
+
+volumes:
+  supportpilot-pgdata:
