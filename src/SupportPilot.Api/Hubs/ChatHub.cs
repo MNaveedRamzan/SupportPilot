@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using SupportPilot.Application.DTOs;
 using SupportPilot.Application.Interfaces;
@@ -14,6 +15,7 @@ namespace SupportPilot.Api.Hubs;
 /// turn to the conversation, and auto-escalates to a support ticket when a
 /// user message's sentiment score crosses the configured threshold.
 /// </summary>
+[EnableRateLimiting("chat")]
 [Authorize]
 public class ChatHub : Hub
 {

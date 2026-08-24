@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SupportPilot.Application.Interfaces;
 
 namespace SupportPilot.Api.Controllers;
@@ -8,6 +9,7 @@ namespace SupportPilot.Api.Controllers;
 /// Admin endpoint for reviewing conversations. List returns lightweight
 /// summaries; GetById returns the full transcript for one conversation.
 /// </summary>
+[EnableRateLimiting("api")]
 [Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]

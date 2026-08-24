@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -13,6 +14,7 @@ namespace SupportPilot.Api.Controllers;
 /// neither. Unlike ChatController (deterministic retrieve-then-answer), this
 /// endpoint lets the model reason about which tools to invoke.
 /// </summary>
+[EnableRateLimiting("chat")]
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]

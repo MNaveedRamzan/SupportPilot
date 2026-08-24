@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SupportPilot.Application.DTOs;
 using SupportPilot.Application.Interfaces;
 
@@ -10,6 +11,7 @@ namespace SupportPilot.Api.Controllers;
 /// vector store. Add embeds and stores new text; list/delete let the admin
 /// review and prune what the agent's search_kb tool can retrieve.
 /// </summary>
+[EnableRateLimiting("api")]
 [Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]

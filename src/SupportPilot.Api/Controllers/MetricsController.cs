@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SupportPilot.Application.Interfaces;
 
 namespace SupportPilot.Api.Controllers;
 
+[EnableRateLimiting("api")]
 [Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]

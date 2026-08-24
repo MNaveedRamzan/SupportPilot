@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SupportPilot.Application.Contracts;
 using SupportPilot.Application.DTOs;
 
 namespace SupportPilot.Api.Controllers;
 
+[EnableRateLimiting("auth")]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
