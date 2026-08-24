@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { SentimentBadge } from "@/components/common/SentimentBadge";
 import {
   Table,
   TableBody,
@@ -88,6 +89,7 @@ export function ConversationsList() {
           <TableRow>
             <TableHead>Created</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Sentiment</TableHead>
             <TableHead>Messages</TableHead>
             <TableHead>Last Message</TableHead>
           </TableRow>
@@ -98,13 +100,14 @@ export function ConversationsList() {
               <TableRow key={i}>
                 <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                 <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-8" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-full" /></TableCell>
               </TableRow>
             ))
           ) : items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="p-0">
+              <TableCell colSpan={5} className="p-0">
                 <EmptyState
                   title="No conversations yet"
                   description="Conversations will appear here once customers start chatting."
@@ -127,6 +130,9 @@ export function ConversationsList() {
                   ) : (
                     <Badge variant="secondary">Normal</Badge>
                   )}
+                </TableCell>
+                <TableCell>
+                  <SentimentBadge score={conversation.averageSentimentScore} />
                 </TableCell>
                 <TableCell>{conversation.messageCount}</TableCell>
                 <TableCell className="max-w-md truncate text-gray-600">
@@ -190,9 +196,7 @@ export function ConversationsList() {
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-medium">{message.role}</span>
                     {message.sentimentScore !== null && (
-                      <span className="text-xs text-gray-500">
-                        Sentiment: {message.sentimentScore.toFixed(2)}
-                      </span>
+                      <SentimentBadge score={message.sentimentScore} />
                     )}
                   </div>
                   <p>{message.content}</p>

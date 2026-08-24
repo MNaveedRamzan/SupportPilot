@@ -86,7 +86,10 @@ public class EfConversationRepository : IConversationRepository
                 LastMessage = c.Messages
                     .OrderByDescending(m => m.CreatedAt)
                     .Select(m => m.Content)
-                    .FirstOrDefault()
+                    .FirstOrDefault(),
+                AverageSentimentScore = c.Messages
+                    .Where(m => m.SentimentScore != null)
+                    .Average(m => (double?)m.SentimentScore)
             })
             .ToListAsync();
 
@@ -99,7 +102,8 @@ public class EfConversationRepository : IConversationRepository
                 r.IsEscalated,
                 r.LinkedTicketId,
                 r.MessageCount,
-                Truncate(r.LastMessage)))
+                Truncate(r.LastMessage),
+                r.AverageSentimentScore))
             .ToList();
 
         return new PagedResult<ConversationSummary>(items, totalCount, page, pageSize);

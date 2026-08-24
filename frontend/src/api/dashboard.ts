@@ -18,6 +18,7 @@ export interface ConversationSummary {
   linkedTicketId: string | null;
   messageCount: number;
   lastMessagePreview: string | null;
+  averageSentimentScore: number | null;
 }
 
 export interface PagedResult<T> {

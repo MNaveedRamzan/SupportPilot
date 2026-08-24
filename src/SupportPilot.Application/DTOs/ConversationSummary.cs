@@ -3,8 +3,8 @@
 /// <summary>
 /// Lightweight projection for the conversations list — avoids loading full
 /// message bodies for every row. Built via LINQ projection so EF translates
-/// aggregation (count, last message) into SQL rather than loading everything
-/// into memory first.
+/// aggregation (count, last message, average sentiment) into SQL rather
+/// than loading everything into memory first.
 /// </summary>
 public record ConversationSummary(
     Guid Id,
@@ -12,4 +12,5 @@ public record ConversationSummary(
     bool IsEscalated,
     Guid? LinkedTicketId,
     int MessageCount,
-    string? LastMessagePreview);
+    string? LastMessagePreview,
+    double? AverageSentimentScore);
