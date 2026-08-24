@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/ErrorState";
 import { fetchMetrics, type MetricsResponse } from "@/api/dashboard";
 
 /**
@@ -10,19 +12,40 @@ import { fetchMetrics, type MetricsResponse } from "@/api/dashboard";
 export function Overview() {
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const loadMetrics = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
     fetchMetrics()
       .then(setMetrics)
-      .catch(() => setError("Failed to load metrics."));
+      .catch(() => setError("Failed to load metrics."))
+      .finally(() => setIsLoading(false));
   }, []);
 
+  useEffect(() => {
+    loadMetrics();
+  }, [loadMetrics]);
+
   if (error) {
-    return <p className="text-red-600 mt-6">{error}</p>;
+    return <ErrorState message={error} onRetry={loadMetrics} />;
   }
 
-  if (!metrics) {
-    return <p className="text-gray-500 mt-6">Loading metrics...</p>;
+  if (isLoading || !metrics) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className="h-4 w-24" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-16" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
 
   const cards = [

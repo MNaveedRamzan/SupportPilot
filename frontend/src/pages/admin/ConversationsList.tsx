@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState";
 import {
   Sheet,
   SheetContent,
@@ -34,38 +37,48 @@ export function ConversationsList() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
+  const [transcriptError, setTranscriptError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadConversations = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
     fetchConversations(page, PAGE_SIZE)
       .then((result) => {
         setItems(result.items);
         setTotalCount(result.totalCount);
       })
-      .catch(() => setError("Failed to load conversations."));
+      .catch(() => setError("Failed to load conversations."))
+      .finally(() => setIsLoading(false));
   }, [page]);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const handleRowClick = async (conversationId: string) => {
     setIsTranscriptOpen(true);
     setIsLoadingTranscript(true);
+    setTranscriptError(null);
     try {
       const conversation = await fetchConversationById(conversationId);
       setSelectedConversation(conversation);
     } catch {
-      setError("Failed to load conversation transcript.");
+      setTranscriptError("Failed to load conversation transcript.");
     } finally {
       setIsLoadingTranscript(false);
     }
   };
 
   if (error) {
-    return <p className="text-red-600 mt-6">{error}</p>;
+    return <ErrorState message={error} onRetry={loadConversations} />;
   }
 
   return (
@@ -80,10 +93,22 @@ export function ConversationsList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.length === 0 ? (
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-full" /></TableCell>
+              </TableRow>
+            ))
+          ) : items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-gray-500">
-                No conversations yet.
+              <TableCell colSpan={4} className="p-0">
+                <EmptyState
+                  title="No conversations yet"
+                  description="Conversations will appear here once customers start chatting."
+                />
               </TableCell>
             </TableRow>
           ) : (
@@ -113,29 +138,31 @@ export function ConversationsList() {
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
-          Page {page} of {totalPages} ({totalCount} total)
-        </p>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
+      {!isLoading && items.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Page {page} of {totalPages} ({totalCount} total)
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       <Sheet open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
@@ -145,7 +172,11 @@ export function ConversationsList() {
 
           <div className="px-4 pb-4 space-y-3">
             {isLoadingTranscript ? (
-              <p className="text-gray-500 text-sm">Loading transcript...</p>
+              Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-md" />
+              ))
+            ) : transcriptError ? (
+              <ErrorState message={transcriptError} />
             ) : selectedConversation ? (
               selectedConversation.messages.map((message) => (
                 <div

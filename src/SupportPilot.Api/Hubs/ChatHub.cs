@@ -71,16 +71,35 @@ public class ChatHub : Hub
         var request = new ChatRequest(message);
         string fullResponse = string.Empty;
 
-        await foreach (string chunk in _ragService.AskStreamingAsync(
-            request, Context.ConnectionAborted))
+        try
         {
-            fullResponse += chunk;
-            await Clients.Caller.SendAsync("ReceiveChunk", chunk);
+            await foreach (string chunk in _ragService.AskStreamingAsync(
+                request, Context.ConnectionAborted))
+            {
+                fullResponse += chunk;
+                await Clients.Caller.SendAsync("ReceiveChunk", chunk);
+            }
+
+            await _conversationRepository.AddMessageAsync(conversation.Id, ChatRole.Assistant, fullResponse);
+
+            await Clients.Caller.SendAsync("ReceiveComplete");
         }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogError(ex,
+                "AI provider call failed for conversation {ConversationId}.", conversation.Id);
 
-        await _conversationRepository.AddMessageAsync(conversation.Id, ChatRole.Assistant, fullResponse);
+            // Persist whatever partial response was streamed before the failure,
+            // so the conversation history isn't silently missing a turn.
+            if (!string.IsNullOrEmpty(fullResponse))
+            {
+                await _conversationRepository.AddMessageAsync(
+                    conversation.Id, ChatRole.Assistant, fullResponse);
+            }
 
-        await Clients.Caller.SendAsync("ReceiveComplete");
+            await Clients.Caller.SendAsync("ReceiveError",
+                "Something went wrong generating a response. Please try again.");
+        }
     }
 
     private async Task<Domain.Entities.Conversation> ResolveConversationAsync(string? conversationId)

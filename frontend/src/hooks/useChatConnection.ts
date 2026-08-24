@@ -58,6 +58,22 @@ export function useChatConnection() {
       });
     });
 
+    connection.on("ReceiveError", (errorMessage: string) => {
+  setMessages((prev) => {
+    const updated = [...prev];
+    const last = updated[updated.length - 1];
+    if (last && last.role === "assistant") {
+      updated[updated.length - 1] = {
+        ...last,
+        isStreaming: false,
+        hasError: true,
+        content: last.content || errorMessage,
+      };
+    }
+    return updated;
+  });
+});
+
     // Fired when sentiment auto-escalation creates a ticket for this
     // conversation. No UI action yet — just logged for now.
     connection.on("Escalated", (ticketId: string) => {
