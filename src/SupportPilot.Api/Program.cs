@@ -26,10 +26,13 @@ builder.Services.AddSignalR();
 // replace "null" with the actual deployed domain.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("DevClient", policy =>
+    options.AddPolicy("AppClient", policy =>
     {
         policy
-            .SetIsOriginAllowed(_ => true)   // dev only — accepts any origin, including file://
+            .WithOrigins(
+                "http://localhost:5173",              // local Vite dev server
+                "https://support-pilot-cyan.vercel.app" // production frontend
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
