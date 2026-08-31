@@ -144,7 +144,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
-app.UseCors("DevClient");
+app.UseCors("AppClient");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
