@@ -82,95 +82,101 @@ public static class DataSeeder
 
     private static async Task SeedConversationsAndTicketsAsync(SupportPilotDbContext context)
     {
+        var now = DateTime.UtcNow;
+
         var resolvedConversation = new Conversation
         {
+            CreatedAt = now.AddDays(-5),
             IsEscalated = false,
             Messages =
+        {
+            new Message
             {
-                new Message
-                {
-                    ConversationId = Guid.Empty, // set below after Id is known
-                    Role = ChatRole.User,
-                    Content = "How long does shipping usually take?",
-                    SentimentScore = 0.1f
-                },
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.Assistant,
-                    Content = "Standard shipping takes 3-5 business days. Express " +
-                              "shipping (2-day) is available at checkout for an additional fee."
-                }
+                ConversationId = Guid.Empty,
+                Role = ChatRole.User,
+                Content = "How long does shipping usually take?",
+                SentimentScore = 0.1f
+            },
+            new Message
+            {
+                ConversationId = Guid.Empty,
+                Role = ChatRole.Assistant,
+                Content = "Standard shipping takes 3-5 business days. Express " +
+                          "shipping (2-day) is available at checkout for an additional fee."
             }
+        }
         };
 
         var escalatedConversation1 = new Conversation
         {
+            CreatedAt = now.AddDays(-3),
             IsEscalated = true,
             Messages =
+        {
+            new Message
             {
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.User,
-                    Content = "My order arrived completely smashed and this is the " +
-                              "second time this has happened. I'm extremely frustrated.",
-                    SentimentScore = 0.9f
-                },
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.Assistant,
-                    Content = "I'm really sorry to hear that. I've escalated this " +
-                              "to our support team, who will reach out shortly to " +
-                              "arrange a replacement."
-                }
+                ConversationId = Guid.Empty,
+                Role = ChatRole.User,
+                Content = "My order arrived completely smashed and this is the " +
+                          "second time this has happened. I'm extremely frustrated.",
+                SentimentScore = 0.9f
+            },
+            new Message
+            {
+                ConversationId = Guid.Empty,
+                Role = ChatRole.Assistant,
+                Content = "I'm really sorry to hear that. I've escalated this " +
+                          "to our support team, who will reach out shortly to " +
+                          "arrange a replacement."
             }
+        }
         };
 
         var escalatedConversation2 = new Conversation
         {
+            CreatedAt = now.AddDays(-2),
             IsEscalated = true,
             Messages =
+        {
+            new Message
             {
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.User,
-                    Content = "I've been charged twice for the same order and no " +
-                              "one has responded to my emails. This is unacceptable.",
-                    SentimentScore = 0.85f
-                },
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.Assistant,
-                    Content = "I understand the frustration — I've flagged this as " +
-                              "a billing issue and created a ticket for our team to resolve it."
-                }
+                ConversationId = Guid.Empty,
+                Role = ChatRole.User,
+                Content = "I've been charged twice for the same order and no " +
+                          "one has responded to my emails. This is unacceptable.",
+                SentimentScore = 0.85f
+            },
+            new Message
+            {
+                ConversationId = Guid.Empty,
+                Role = ChatRole.Assistant,
+                Content = "I understand the frustration — I've flagged this as " +
+                          "a billing issue and created a ticket for our team to resolve it."
             }
+        }
         };
 
         var casualConversation = new Conversation
         {
+            CreatedAt = now.AddDays(-1),
             IsEscalated = false,
             Messages =
+        {
+            new Message
             {
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.User,
-                    Content = "Can I change my subscription plan mid-cycle?",
-                    SentimentScore = 0.05f
-                },
-                new Message
-                {
-                    ConversationId = Guid.Empty,
-                    Role = ChatRole.Assistant,
-                    Content = "Yes, you can upgrade or downgrade anytime from the " +
-                              "Billing section. Changes apply at the start of the next billing cycle."
-                }
+                ConversationId = Guid.Empty,
+                Role = ChatRole.User,
+                Content = "Can I change my subscription plan mid-cycle?",
+                SentimentScore = 0.05f
+            },
+            new Message
+            {
+                ConversationId = Guid.Empty,
+                Role = ChatRole.Assistant,
+                Content = "Yes, you can upgrade or downgrade anytime from the " +
+                          "Billing section. Changes apply at the start of the next billing cycle."
             }
+        }
         };
 
         context.Conversations.AddRange(

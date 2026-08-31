@@ -24,4 +24,11 @@ public class MetricsController : ControllerBase
         var metrics = await _metricsService.GetMetricsAsync();
         return Ok(metrics);
     }
+
+    [HttpGet("analytics")]
+    public async Task<IActionResult> GetAnalytics()
+    {
+        var result = await _metricsService.GetAnalyticsAsync();
+        return Ok(result);
+    }
 }

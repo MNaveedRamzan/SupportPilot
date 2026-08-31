@@ -50,11 +50,34 @@ export interface KnowledgeArticle {
   text: string;
 }
 
+export interface DailyMetric {
+  date: string;
+  totalConversations: number;
+  escalatedConversations: number;
+}
+
+export interface SentimentDistribution {
+  calmCount: number;
+  neutralCount: number;
+  frustratedCount: number;
+}
+
+export interface AnalyticsResponse {
+  escalationTrend: DailyMetric[];
+  sentimentBreakdown: SentimentDistribution;
+}
+
 // --- API calls ---
 
 export async function fetchMetrics(): Promise<MetricsResponse> {
   const res = await authFetch("/Metrics");
   if (!res.ok) throw new Error("Failed to fetch metrics");
+  return res.json();
+}
+
+export async function fetchAnalytics(): Promise<AnalyticsResponse> {
+  const res = await authFetch("/Metrics/analytics");
+  if (!res.ok) throw new Error("Failed to fetch analytics");
   return res.json();
 }
 

@@ -26,4 +26,6 @@ public interface IConversationRepository
     /// Returns null if no messages have been scored yet.
     /// </summary>
     Task<double?> GetAverageSentimentScoreAsync();
+
+    Task<IReadOnlyList<ConversationAnalyticsRow>> GetConversationsForAnalyticsAsync(DateTime sinceUtc);
 }

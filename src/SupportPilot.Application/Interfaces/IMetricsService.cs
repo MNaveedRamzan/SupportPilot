@@ -10,4 +10,5 @@ namespace SupportPilot.Application.Interfaces;
 public interface IMetricsService
 {
     Task<MetricsResponse> GetMetricsAsync();
+    Task<AnalyticsResponse> GetAnalyticsAsync();
 }

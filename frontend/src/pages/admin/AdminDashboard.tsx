@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { Overview } from "./Overview";
 import { ConversationsList } from "./ConversationsList";
 import { KnowledgeBase } from "./KnowledgeBase";
+import { Analytics } from "./Analytics";
 
 /**
- * Admin dashboard shell. Tabs switch between the three Day 3 backend
- * capabilities — metrics, conversation review, and knowledge base management —
+ * Admin dashboard shell. Tabs switch between backend capabilities —
+ * metrics, analytics, conversation review, and knowledge base management —
  * without needing separate routes for each.
  */
 export function AdminDashboard() {
@@ -23,12 +24,17 @@ export function AdminDashboard() {
         <Tabs defaultValue="overview">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="conversations">Conversations</TabsTrigger>
             <TabsTrigger value="knowledge-base">Knowledge Base</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
             <Overview />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <Analytics />
           </TabsContent>
 
           <TabsContent value="conversations">

@@ -109,6 +109,19 @@ public class EfConversationRepository : IConversationRepository
         return new PagedResult<ConversationSummary>(items, totalCount, page, pageSize);
     }
 
+    public async Task<IReadOnlyList<ConversationAnalyticsRow>> GetConversationsForAnalyticsAsync(DateTime sinceUtc)
+    {
+        return await _dbContext.Conversations
+            .Where(c => c.CreatedAt >= sinceUtc)
+            .Select(c => new ConversationAnalyticsRow(
+                c.CreatedAt,
+                c.IsEscalated,
+                c.Messages
+                    .Where(m => m.SentimentScore != null)
+                    .Average(m => (double?)m.SentimentScore)))
+            .ToListAsync();
+    }
+
     public async Task<int> GetTotalCountAsync()
     {
         return await _dbContext.Conversations.CountAsync();
