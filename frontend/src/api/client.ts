@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://localhost:7020/api";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 /**
  * Wraps fetch with the Authorization header automatically attached from

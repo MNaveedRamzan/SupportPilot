@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 
 // Centralized so the URL only needs to change in one place when deploying
 // (local dev today, Render's backend URL once SupportPilot goes live in Week 4).
-const HUB_URL = "https://localhost:7020/hubs/chat";
+const HUB_URL = `${import.meta.env.VITE_API_BASE_URL}/hubs/chat`;
 
 /**
  * Builds a new SignalR connection to the chat hub. Does not start the

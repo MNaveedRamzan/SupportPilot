@@ -4,11 +4,12 @@ import { Overview } from "./Overview";
 import { ConversationsList } from "./ConversationsList";
 import { KnowledgeBase } from "./KnowledgeBase";
 import { Analytics } from "./Analytics";
+import { Integrations } from "./Integrations";
 
 /**
  * Admin dashboard shell. Tabs switch between backend capabilities —
- * metrics, analytics, conversation review, and knowledge base management —
- * without needing separate routes for each.
+ * metrics, analytics, conversation review, knowledge base management,
+ * and integration stubs — without needing separate routes for each.
  */
 export function AdminDashboard() {
   return (
@@ -27,6 +28,7 @@ export function AdminDashboard() {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="conversations">Conversations</TabsTrigger>
             <TabsTrigger value="knowledge-base">Knowledge Base</TabsTrigger>
+            <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -43,6 +45,10 @@ export function AdminDashboard() {
 
           <TabsContent value="knowledge-base">
             <KnowledgeBase />
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <Integrations />
           </TabsContent>
         </Tabs>
       </div>
