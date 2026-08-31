@@ -26,6 +26,8 @@ import {
   type Conversation,
 } from "@/api/dashboard";
 
+import { exportTranscriptToPdf } from "@/lib/exportTranscript";
+
 const PAGE_SIZE = 20;
 
 /**
@@ -172,9 +174,19 @@ export function ConversationsList() {
 
       <Sheet open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Conversation Transcript</SheetTitle>
-          </SheetHeader>
+         <SheetHeader>
+          <SheetTitle>Conversation Transcript</SheetTitle>
+          {selectedConversation && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-fit"
+              onClick={() => exportTranscriptToPdf(selectedConversation)}
+            >
+              Export PDF
+            </Button>
+          )}
+        </SheetHeader>
 
           <div className="px-4 pb-4 space-y-3">
             {isLoadingTranscript ? (
