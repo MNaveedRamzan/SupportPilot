@@ -57,6 +57,21 @@ A few decisions worth calling out, since they reflect engineering judgment rathe
 
 ---
 
+## Enterprise-readiness signals
+
+Two additions demonstrate patterns a growing SaaS product would need, without over-building features the demo doesn't require:
+
+- **Integrations tab (UI stub).** The admin dashboard includes a "Connect" flow for Slack (functional toggle, no backend call) alongside Teams/Zendesk placeholders. This is intentionally UI-only — it demonstrates the intended integration surface without claiming a real webhook implementation. A production build would introduce an `IWebhookService` interface, following the same provider-abstraction pattern already used for `IChatProvider`, with real OAuth flows and signed webhook delivery.
+
+- **Path to multi-tenancy.** The current data model is single-tenant — one shared set of conversations, tickets, and knowledge base articles. This was a deliberate scope decision, not an oversight: a demo project serving one imagined organization doesn't need tenant isolation to prove the underlying patterns work. Getting to multi-tenant would mean:
+  - Adding a `TenantId` column to `Conversation`, `Ticket`, `Message`, and `User`, sourced from a claim on the JWT rather than a request parameter (so a compromised client can't spoof another tenant's ID).
+  - Using EF Core's **global query filters** (`modelBuilder.Entity<T>().HasQueryFilter(e => e.TenantId == currentTenantId)`) so every query is automatically scoped — the alternative, manually adding a `.Where(TenantId == ...)` to every repository method, is exactly the kind of thing that gets forgotten once and causes a data leak.
+  - Partitioning the Qdrant knowledge base per tenant (either separate collections or a `tenant_id` payload filter on search), since knowledge articles are tenant-specific content, not shared reference data.
+  
+  None of this is implemented — it's documented here because knowing the shape of the next step matters as much as building the current one.
+
+---
+
 ## Getting started
 
 ### Prerequisites
@@ -121,6 +136,6 @@ Log in as Admin to see the dashboard (conversation history, escalation metrics, 
 
 ## Project status
 
-Actively in development. Current focus: production-readiness polish (rate limiting, graceful error handling, empty/loading states) ahead of deployment.
+Actively in development. Completed so far: JWT auth with role-based access, demo data seeding, rate limiting, graceful AI-failure handling, sentiment visualization, analytics charts, PDF transcript export, and an integrations UI stub. Remaining before launch: production deployment (Render + Vercel), CORS lockdown, and a demo video.
 
 See commit history for progress — this project is built incrementally, session by session, with an emphasis on getting each piece right before moving to the next rather than rushing to a demo-only MVP.
